@@ -4,7 +4,7 @@
 #include <Windows.h>
 #include <string>
 
-auto fix_date = [](std::string date_str) -> std::string {
+std::string fix_date(const std::string& date_str) {
     if (date_str.size() != 4)
         return "invalid length";
     else if (!(!date_str.empty() && std::all_of(date_str.begin(), date_str.end(), ::isdigit)))
@@ -23,7 +23,7 @@ std::wstring utf8_to_wide(const std::string& str)
     return wstr;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     //send request
     std::string response_text = cpr::Get(cpr::Url{ "https://svatky.adresa.info/json?lang=cs" }).text;
