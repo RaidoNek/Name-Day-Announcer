@@ -51,15 +51,55 @@ int get_minutes() {
     return std::stoi(minutes_s);
 }
 
+std::string get_country() {
+    std::string_view codes[] = {
+        "at",
+        "bg",
+        "cz",
+        "de",
+        "dk",
+        "ee",
+        "es",
+        "fi",
+        "fr",
+        "gr",
+        "hr",
+        "hu",
+        "it",
+        "lt",
+        "lv",
+        "pl",
+        "ru",
+        "se",
+        "sk",
+        "us"
+    };
+
+    std::cout << "Hello, first enter country code for which you want to announce name days" << "\n";
+    std::cout << "Supported ccs are: ";
+    short length = (sizeof(codes) / sizeof(codes[0]));
+    for (short i = 0; i < length; i++) {
+        std::cout << codes[i] << ((i == (length - 1)) ? "" : " | ");
+    }
+    std::cout << "\n";
+    std::cout << "Enter country code: " << "\n";
+
+    return "cz";
+}
+
 void Run() {
+    //get country code for name day
+    std::string country_code = get_country();
+
     //send request
-    std::string response_text = cpr::Get(cpr::Url{ "https://svatky.adresa.info/json?lang=cs" }).text;
+    cpr::Response r = cpr::Post(cpr::Url{ "https://nameday.abalin.net/today" }, cpr::Parameters{ {"country", country_code} });
+    std::string response_text = r.text;
 
     //parse json request response
     nlohmann::json parsed = nlohmann::json::parse(response_text, nullptr, false);
 
     //discard check
-    if (parsed.is_discarded()) return false;
+    if (parsed.is_discarded()) exit(0);
 
     //declare variables
     int u_hours = 0;
@@ -84,7 +124,7 @@ void Run() {
     HWND window;
     AllocConsole();
     window = GetConsoleWindow();
-    ShowWindow(window, show);
+    //ShowWindow(window, show);
 
     while (true) {
         //get time since midnight
@@ -113,9 +153,15 @@ void Run() {
 
         //checking if current time equals users announce time every second
         if (hours.count() == u_hours && minutes.count() == u_minutes && seconds.count() == 0) {
-            for (const auto& var : parsed) {
-                std::string msg = var["name"].get<std::string>() + " has a name day today, wish her/him luck";
-                MessageBoxW(0, utf8_to_wide(msg).c_str(), L"name day announcer", 0);
+            std::cout << parsed << "\n";
+            for (short i = 0; const auto & var : parsed) {
+                if (i == 0) {
+                    std::string msg = var["namedays"][country_code].get<std::string>() + " has a name day today, wish her/him luck";
+                    MessageBoxW(0, utf8_to_wide(msg).c_str(), L"name day announcer", 0);
+
+                    i++;
+                }
+                break;
             }
         }       
         Sleep(1000);
