@@ -14,17 +14,6 @@ bool hasWindows() {
 #endif
 }
 
-std::string fix_date(const std::string& date_str) {
-    if (date_str.size() != 4)
-        return "invalid length";
-    else if (!(!date_str.empty() && std::all_of(date_str.begin(), date_str.end(), ::isdigit)))
-        return "not numeric";
-
-    int day = std::stoi(date_str.substr(0, 2));
-    int month = std::stoi(date_str.substr(2, 4));
-    return std::to_string(day) + ". " + std::to_string(month);
-};
-
 std::wstring utf8_to_wide(const std::string& str)
 {
     int count = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), NULL, 0);
@@ -125,7 +114,7 @@ void Run() {
         //checking if current time equals users announce time every second
         if (hours.count() == u_hours && minutes.count() == u_minutes && seconds.count() == 0) {
             for (const auto& var : parsed) {
-                std::string msg = "Today " + fix_date(var["date"].get<std::string>()) + " is a " + var["name"].get<std::string>() + "s name day, wish her/him luck";
+                std::string msg = var["name"].get<std::string>() + " has a name day today, wish her/him luck";
                 MessageBoxW(0, utf8_to_wide(msg).c_str(), L"name day announcer", 0);
             }
         }       
