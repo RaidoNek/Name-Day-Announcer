@@ -62,7 +62,16 @@ int get_minutes() {
     return std::stoi(minutes_s);
 }
 
-void Run(nlohmann::json parsed) {
+void Run() {
+    //send request
+    std::string response_text = cpr::Get(cpr::Url{ "https://svatky.adresa.info/json?lang=cs" }).text;
+
+    //parse json request response
+    nlohmann::json parsed = nlohmann::json::parse(response_text, nullptr, false);
+
+    //discard check
+    if (parsed.is_discarded()) return false;
+
     //declare variables
     int u_hours = 0;
     int u_minutes = 0;
@@ -109,10 +118,11 @@ void Run(nlohmann::json parsed) {
                 Sleep(1000);
             }
             system(hasWindows() ? "cls" : "clear");
-            Run(parsed);
+            Run();
             break;
         }
 
+        //checking if current time equals users announce time every second
         if (hours.count() == u_hours && minutes.count() == u_minutes && seconds.count() == 0) {
             for (const auto& var : parsed) {
                 std::string msg = "Today " + fix_date(var["date"].get<std::string>()) + " is a " + var["name"].get<std::string>() + "s name day, wish her/him luck";
@@ -125,17 +135,8 @@ void Run(nlohmann::json parsed) {
 
 int main(int argc, char *argv[])
 {
-    //send request
-    std::string response_text = cpr::Get(cpr::Url{ "https://svatky.adresa.info/json?lang=cs" }).text;
-
-    //parse json request response
-    nlohmann::json parsed = nlohmann::json::parse(response_text, nullptr, false);
-
-    //discard check
-    if (parsed.is_discarded()) return false;
-
-    Run(parsed);
-
+    //call main function
+    Run();
     std::cin.get();
 
     return 0;
