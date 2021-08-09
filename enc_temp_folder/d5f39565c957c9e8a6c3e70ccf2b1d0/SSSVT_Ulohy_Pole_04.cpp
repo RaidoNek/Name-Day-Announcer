@@ -76,7 +76,7 @@ void Run(nlohmann::json parsed) {
     std::cout << "DEL - Reset app and enter time again" << "\n";
 
     //print hide time remaining
-    for (short i = 5; i > 0; i--) {
+    for (short i = 10; i > 0; i--) {
         std::cout << "Hiding window in " << i << "..." << "\n";
         Sleep(1000);
     }
