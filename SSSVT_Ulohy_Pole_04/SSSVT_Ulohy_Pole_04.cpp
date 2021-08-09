@@ -14,6 +14,16 @@ bool hasWindows() {
 #endif
 }
 
+bool isNumeric(const std::string& str) {
+    for (int i = 0; i < str.length(); i++) {
+        if (isdigit(str[i]) == false) {
+            //return false if something non-numerical is found
+            return false;
+        }
+    }
+    return true;
+}
+
 std::wstring utf8_to_wide(const std::string& str)
 {
     int count = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), NULL, 0);
@@ -39,6 +49,11 @@ int get_hours() {
     std::cout << "Enter a hour (0-23, not AM/PM): ";
     std::string hour_s;
     std::cin >> hour_s;
+
+    if (!(isNumeric(hour_s))) {
+        std::cout << "Invalid input, try again." << "\n";
+        get_hours();
+    }
     
     return std::stoi(hour_s);
 }
@@ -47,6 +62,11 @@ int get_minutes() {
     std::cout << "Enter a minute (0-59): ";
     std::string minutes_s;
     std::cin >> minutes_s;
+
+    if (!(isNumeric(minutes_s))) {
+        std::cout << "Invalid input, try again." << "\n";
+        get_minutes();
+    }
 
     return std::stoi(minutes_s);
 }
@@ -79,10 +99,14 @@ std::string get_country() {
     //print info messages
     std::cout << "Hello, first enter country code for which you want to announce name days" << "\n";
     std::cout << "Supported country codes are: ";
+
+    //declare length, dynamically show all supported country codes
     short length = (sizeof(codes) / sizeof(codes[0]));
     for (short i = 0; i < length; i++) {
         std::cout << codes[i] << ((i == (length - 1)) ? "" : " | ");
     }
+
+    //let user to enter code
     std::cout << "\n";
     std::cout << "Enter country code: ";
 

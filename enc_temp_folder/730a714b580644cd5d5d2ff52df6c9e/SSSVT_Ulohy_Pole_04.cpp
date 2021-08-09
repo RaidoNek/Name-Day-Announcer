@@ -36,7 +36,7 @@ std::chrono::system_clock::duration duration_since_midnight() {
 }
 
 int get_hours() {
-    std::cout << "Enter hour (0-23, not AM/PM): ";
+    std::cout << "Enter a hour (0-23, not AM/PM): ";
     std::string hour_s;
     std::cin >> hour_s;
     
@@ -44,7 +44,7 @@ int get_hours() {
 }
 
 int get_minutes() {
-    std::cout << "Enter minutes (0-59): ";
+    std::cout << "Enter a minute (0-59): ";
     std::string minutes_s;
     std::cin >> minutes_s;
 
@@ -53,7 +53,7 @@ int get_minutes() {
 
 std::string get_country() {
     //declare supported country codes
-    std::string codes[] = {
+    const std::string codes[] = {
         "at",
         "bg",
         "cz",
@@ -79,10 +79,14 @@ std::string get_country() {
     //print info messages
     std::cout << "Hello, first enter country code for which you want to announce name days" << "\n";
     std::cout << "Supported country codes are: ";
+
+    //declare length, dynamically show all supported country codes
     short length = (sizeof(codes) / sizeof(codes[0]));
     for (short i = 0; i < length; i++) {
         std::cout << codes[i] << ((i == (length - 1)) ? "" : " | ");
     }
+
+    //let user to enter code
     std::cout << "\n";
     std::cout << "Enter country code: ";
 
@@ -90,13 +94,13 @@ std::string get_country() {
     std::string country_s;
     std::cin >> country_s;
 
-    bool found = false;
     for (short i = 0; i < length; i++) {
         if (strcmp(country_s.c_str(), codes[i].c_str()) == 0) {
             return country_s;
         } 
     }
 
+    //User entered invalid country code
     std::cout << "That's not a supported country code" << "\n";
     for (short i = 3; i > 0; i--) {
         std::cout << "Reseting app in " << i << "..." << "\n";
@@ -121,8 +125,8 @@ void Run() {
     if (parsed.is_discarded()) exit(0);
 
     //declare variables
-    int u_hours = 0;
-    int u_minutes = 0;
+    short u_hours = 0;
+    short u_minutes = 0;
 
     //get announce time
     u_hours = get_hours();
@@ -175,17 +179,17 @@ void Run() {
             for (short i = 0; const auto & var : parsed) {
                 if (i == 0) {
                     //get value
-                    std::string value = var["namedays"][country_code].get<std::string>();
+                    const std::string value = var["namedays"][country_code].get<std::string>();
+                    const bool contains = (value.find(",") != std::string::npos);
 
                     //get name... if valid -> print name, if not -> print "No one"
-                    std::string name = ((value == "n\/a") ? "No one" : value);
+                    const std::string name = ((value == "n\/a") ? "No one" : value);
 
                     //get spelling -> if str contains , -> it definitely contains multiple names
-                    bool contains = (value.find(",") != std::string::npos);
-                    std::string spelling = ((contains) ? " have" : " has");
-                    std::string spelling2 = ((contains) ? "them" : "her/him");
+                    const std::string spelling = ((contains) ? " have" : " has");
+                    const std::string spelling2 = ((contains) ? "them" : "her/him");
 
-                    std::string msg = name + spelling + " a name day today, wish " + spelling2 + " luck";
+                    const std::string msg = name + spelling + " a name day today, wish " + spelling2 + " luck";
                     MessageBoxW(0, utf8_to_wide(msg).c_str(), L"name day announcer", 0);
 
                     i++;
@@ -197,11 +201,10 @@ void Run() {
     }
 }
 
-int main(int argc, char *argv[])
+int main()
 {
     //call main function
     Run();
-    std::cin.get();
 
     return 0;
 }
