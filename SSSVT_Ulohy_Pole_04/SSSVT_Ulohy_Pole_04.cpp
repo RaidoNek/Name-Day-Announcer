@@ -46,7 +46,7 @@ std::chrono::system_clock::duration duration_since_midnight() {
 }
 
 int get_hours() {
-    std::cout << "Enter a hour (0-23, not AM/PM): ";
+    std::cout << "Enter an hour (0-23, not AM/PM): ";
     std::string hour_s;
     std::cin >> hour_s;
 
@@ -54,8 +54,14 @@ int get_hours() {
         std::cout << "Invalid input, try again." << "\n";
         get_hours();
     }
-    
-    return std::stoi(hour_s);
+
+    int input = std::stoi(hour_s);
+    if (input > 24 || input < 0) {
+        std::cout << "Invalid input, try again." << "\n";
+        get_hours();
+    }
+
+    return input;
 }
 
 int get_minutes() {
@@ -68,7 +74,13 @@ int get_minutes() {
         get_minutes();
     }
 
-    return std::stoi(minutes_s);
+    int input = std::stoi(minutes_s);
+    if (input > 59 || input < 0) {
+        std::cout << "Invalid input, try again." << "\n";
+        get_minutes();
+    }
+
+    return input;
 }
 
 std::string get_country() {
