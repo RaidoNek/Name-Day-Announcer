@@ -36,7 +36,7 @@ std::chrono::system_clock::duration duration_since_midnight() {
 }
 
 int get_hours() {
-    std::cout << "Enter hour (0-23, not AM/PM): ";
+    std::cout << "Enter a hour (0-23, not AM/PM): ";
     std::string hour_s;
     std::cin >> hour_s;
     
@@ -44,7 +44,7 @@ int get_hours() {
 }
 
 int get_minutes() {
-    std::cout << "Enter minutes (0-59): ";
+    std::cout << "Enter a minute (0-59): ";
     std::string minutes_s;
     std::cin >> minutes_s;
 
