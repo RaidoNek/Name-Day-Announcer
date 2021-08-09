@@ -53,7 +53,7 @@ int get_minutes() {
 
 std::string get_country() {
     //declare supported country codes
-    const std::string codes[] = {
+    std::string codes[] = {
         "at",
         "bg",
         "cz",
@@ -90,13 +90,13 @@ std::string get_country() {
     std::string country_s;
     std::cin >> country_s;
 
+    bool found = false;
     for (short i = 0; i < length; i++) {
         if (strcmp(country_s.c_str(), codes[i].c_str()) == 0) {
             return country_s;
         } 
     }
 
-    //User entered invalid country code
     std::cout << "That's not a supported country code" << "\n";
     for (short i = 3; i > 0; i--) {
         std::cout << "Reseting app in " << i << "..." << "\n";
@@ -121,8 +121,8 @@ void Run() {
     if (parsed.is_discarded()) exit(0);
 
     //declare variables
-    short u_hours = 0;
-    short u_minutes = 0;
+    int u_hours = 0;
+    int u_minutes = 0;
 
     //get announce time
     u_hours = get_hours();
@@ -175,17 +175,17 @@ void Run() {
             for (short i = 0; const auto & var : parsed) {
                 if (i == 0) {
                     //get value
-                    const std::string value = var["namedays"][country_code].get<std::string>();
-                    const bool contains = (value.find(",") != std::string::npos);
+                    std::string value = var["namedays"][country_code].get<std::string>();
 
                     //get name... if valid -> print name, if not -> print "No one"
-                    const std::string name = ((value == "n\/a") ? "No one" : value);
+                    std::string name = ((value == "n\/a") ? "No one" : value);
 
                     //get spelling -> if str contains , -> it definitely contains multiple names
-                    const std::string spelling = ((contains) ? " have" : " has");
-                    const std::string spelling2 = ((contains) ? "them" : "her/him");
+                    bool contains = (value.find(",") != std::string::npos);
+                    std::string spelling = ((contains) ? " have" : " has");
+                    std::string spelling2 = ((contains) ? "them" : "her/him");
 
-                    const std::string msg = name + spelling + " a name day today, wish " + spelling2 + " luck";
+                    std::string msg = name + spelling + " a name day today, wish " + spelling2 + " luck";
                     MessageBoxW(0, utf8_to_wide(msg).c_str(), L"name day announcer", 0);
 
                     i++;
@@ -197,10 +197,11 @@ void Run() {
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     //call main function
     Run();
+    std::cin.get();
 
     return 0;
 }
