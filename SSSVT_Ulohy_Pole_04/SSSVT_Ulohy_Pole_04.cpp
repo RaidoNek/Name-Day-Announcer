@@ -7,11 +7,11 @@
 #pragma warning(disable : 4996)
 
 bool hasWindows() {
-#if defined(WIN32) || defined(WIN32) || defined(__WIN32) && !defined(__CYGWIN_)
-    return true;
-#else
-    return false;
-#endif
+    #if defined(WIN32) || defined(WIN32) || defined(__WIN32) && !defined(__CYGWIN_)
+        return true;
+    #else
+        return false;
+    #endif
 }
 
 bool isNumeric(const std::string& str) {
@@ -24,7 +24,7 @@ bool isNumeric(const std::string& str) {
     return true;
 }
 
-std::wstring utf8_to_wide(const std::string& str)
+std::wstring utf8ToWide(const std::string& str)
 {
     int count = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), NULL, 0);
     std::wstring wstr(count, 0);
@@ -32,7 +32,7 @@ std::wstring utf8_to_wide(const std::string& str)
     return wstr;
 }
 
-std::chrono::system_clock::duration duration_since_midnight() {
+std::chrono::system_clock::duration durationSinceMidnight() {
     auto now = std::chrono::system_clock::now();
 
     time_t tnow = std::chrono::system_clock::to_time_t(now);
@@ -45,45 +45,45 @@ std::chrono::system_clock::duration duration_since_midnight() {
     return now - midnight;
 }
 
-int get_hours() {
+int getHours() {
     std::cout << "Enter an hour (0-23, not AM/PM): ";
     std::string hour_s;
     std::cin >> hour_s;
 
     if (!(isNumeric(hour_s))) {
         std::cout << "Invalid input, try again." << "\n";
-        get_hours();
+        getHours();
     }
 
-    int input = std::stoi(hour_s);
-    if (input > 24 || input < 0) {
+    const int input = std::stoi(hour_s);
+    if (input > 23 || input < 0) {
         std::cout << "Invalid input, try again." << "\n";
-        get_hours();
+        getHours();
     }
 
     return input;
 }
 
-int get_minutes() {
+int getMinutes() {
     std::cout << "Enter a minute (0-59): ";
     std::string minutes_s;
     std::cin >> minutes_s;
 
     if (!(isNumeric(minutes_s))) {
         std::cout << "Invalid input, try again." << "\n";
-        get_minutes();
+        getMinutes();
     }
 
-    int input = std::stoi(minutes_s);
+    const int input = std::stoi(minutes_s);
     if (input > 59 || input < 0) {
         std::cout << "Invalid input, try again." << "\n";
-        get_minutes();
+        getMinutes();
     }
 
     return input;
 }
 
-std::string get_country() {
+std::string getCountry() {
     //declare supported country codes
     const std::string codes[] = {
         "at",
@@ -139,30 +139,16 @@ std::string get_country() {
         Sleep(1000);
     }
     system(hasWindows() ? "cls" : "clear");
-    get_country();
+    getCountry();
 }
 
 void Run() {
     //get country code for name day
-    std::string country_code = get_country();
-
-    //send request
-    cpr::Response r = cpr::Post(cpr::Url{ "https://nameday.abalin.net/today" }, cpr::Parameters{ {"country", country_code} });
-    std::string response_text = r.text;
-
-    //parse json request response
-    nlohmann::json parsed = nlohmann::json::parse(response_text, nullptr, false);
-
-    //discard check
-    if (parsed.is_discarded()) exit(0);
+    const std::string country_code = getCountry();
 
     //declare variables
-    short u_hours = 0;
-    short u_minutes = 0;
-
-    //get announce time
-    u_hours = get_hours();
-    u_minutes = get_minutes();
+    const int u_hours = getHours();
+    const int u_minutes = getMinutes();
 
     //print info
     std::cout << "PAUSE - Show Window Again" << "\n";
@@ -183,10 +169,10 @@ void Run() {
 
     while (true) {
         //get time since midnight
-        auto since_midnight = duration_since_midnight();
-        auto hours = std::chrono::duration_cast<std::chrono::hours>(since_midnight);
-        auto minutes = std::chrono::duration_cast<std::chrono::minutes>(since_midnight - hours);
-        auto seconds = std::chrono::duration_cast<std::chrono::seconds>(since_midnight - hours - minutes);
+        const auto since_midnight = durationSinceMidnight();
+        const auto hours = std::chrono::duration_cast<std::chrono::hours>(since_midnight);
+        const auto minutes = std::chrono::duration_cast<std::chrono::minutes>(since_midnight - hours);
+        const auto seconds = std::chrono::duration_cast<std::chrono::seconds>(since_midnight - hours - minutes);
 
         //if user clicks on PAUSE button - shows up window
         if (GetAsyncKeyState(VK_PAUSE) & 0x13) {
@@ -208,6 +194,16 @@ void Run() {
 
         //checking if current time equals users announce time every second
         if (hours.count() == u_hours && minutes.count() == u_minutes && seconds.count() == 0) {
+            //send request
+            cpr::Response r = cpr::Post(cpr::Url{ "https://nameday.abalin.net/today" }, cpr::Parameters{ {"country", country_code} });
+            const std::string response_text = r.text;
+
+            //parse json request response
+            const nlohmann::json parsed = nlohmann::json::parse(response_text, nullptr, false);
+
+            //discard check
+            if (parsed.is_discarded()) exit(0);
+
             for (short i = 0; const auto & var : parsed) {
                 if (i == 0) {
                     //get value
@@ -222,7 +218,7 @@ void Run() {
                     const std::string spelling2 = ((contains) ? "them" : "her/him");
 
                     const std::string msg = name + spelling + " a name day today, wish " + spelling2 + " luck";
-                    MessageBoxW(0, utf8_to_wide(msg).c_str(), L"name day announcer", 0);
+                    MessageBoxW(0, utf8ToWide(msg).c_str(), L"name day announcer", 0);
 
                     i++;
                 }
