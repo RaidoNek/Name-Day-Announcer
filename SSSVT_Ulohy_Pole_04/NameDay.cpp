@@ -94,19 +94,12 @@ void NameDay::ShowNameDay(unsigned short u_hours, unsigned short u_minutes, cons
     }
 }
 
-bool NameDay::isNumeric(const std::string& str) {
-    for (const auto& var : str) {
-        if (!isdigit(var)) return false;
-    }
-    return true;
-}
-
 unsigned short NameDay::getHours() {
     std::cout << "Enter an hour (0-23, not AM/PM): ";
     std::string hour_s;
     std::cin >> hour_s;
 
-    if (!(isNumeric(hour_s))) {
+    if (!(utilities::isNumeric(hour_s))) {
         std::cout << "Invalid input, try again." << "\n";
         getHours();
     }
@@ -127,7 +120,7 @@ unsigned short NameDay::getMinutes() {
     std::string minutes_s;
     std::cin >> minutes_s;
 
-    if (!(isNumeric(minutes_s))) {
+    if (!(utilities::isNumeric(minutes_s))) {
         std::cout << "Invalid input, try again." << "\n";
         getMinutes();
     }

@@ -8,6 +8,13 @@ bool utilities::hasWindows() {
     #endif
 }
 
+bool utilities::isNumeric(const std::string& str) {
+    for (const auto& var : str) {
+        if (!isdigit(var)) return false;
+    }
+    return true;
+}
+
 std::wstring utilities::utf8ToWide(const std::string& str)
 {
     const int count = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), NULL, 0);
