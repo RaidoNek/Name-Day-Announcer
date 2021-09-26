@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+#include <windows.h>
+#include <chrono>
 
 namespace utilities {
     bool hasWindows();

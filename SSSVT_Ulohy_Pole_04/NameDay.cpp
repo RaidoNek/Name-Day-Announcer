@@ -31,14 +31,14 @@ void NameDay::Run() {
 
     while (true) {
         //if user clicks on PAUSE button - shows up window
-        if (GetAsyncKeyState(VK_PAUSE) & 0x13) {
+        if (GetAsyncKeyState(VK_PAUSE)) {
             show = !show;
             ShowWindow(window, show);
             std::cout << "Welcome back, would you like to reset announce time?" << "\n";
         }
 
         //reset announce time if window is opened
-        if ((GetAsyncKeyState(VK_DELETE) & 0x13) && window) {
+        if ((GetAsyncKeyState(VK_DELETE)) && window) {
             for (short i = 5; i > 0; i--) {
                 std::cout << "Reseting announce time in " << i << "..." << "\n";
                 Sleep(1000);
@@ -99,7 +99,7 @@ unsigned short NameDay::getHours() {
     std::string hour_s;
     std::cin >> hour_s;
 
-    if (!(utilities::isNumeric(hour_s))) {
+    if (!(utilities::isNumeric(hour_s)) || hour_s == "") {
         std::cout << "Invalid input, try again." << "\n";
         getHours();
     }
@@ -120,7 +120,7 @@ unsigned short NameDay::getMinutes() {
     std::string minutes_s;
     std::cin >> minutes_s;
 
-    if (!(utilities::isNumeric(minutes_s))) {
+    if (!(utilities::isNumeric(minutes_s)) || minutes_s == "") {
         std::cout << "Invalid input, try again." << "\n";
         getMinutes();
     }
@@ -137,7 +137,7 @@ unsigned short NameDay::getMinutes() {
 std::string NameDay::getCountry() {
     //declare supported country codes
     //nevim dopice, ma tu byt std::string??? nejde mi tu dat constexpr :(
-    const std::string codes[] = {
+    const std::vector<std::string> codes = {
         "at",
         "bg",
         "cz",
@@ -165,7 +165,7 @@ std::string NameDay::getCountry() {
     std::cout << "Supported country codes are: ";
 
     //declare length, dynamically show all supported country codes
-    const unsigned short length = (sizeof(codes) / sizeof(codes[0]));
+    const size_t length = codes.size();
     for (unsigned short i = 0; i < length; i++) {
         std::cout << codes[i] << ((i == (length - 1)) ? "" : " | ");
     }
